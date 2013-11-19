@@ -226,7 +226,25 @@ VdpStatus vdp_video_surface_query_get_put_bits_y_cb_cr_capabilities(VdpDevice de
 	if (!dev)
 		return VDP_STATUS_INVALID_HANDLE;
 
-	*is_supported = VDP_FALSE;
+	switch (source_ycbcr_format)
+	{
+	case VDP_YCBCR_FORMAT_YUYV:
+	case VDP_YCBCR_FORMAT_UYVY:
+		*is_supported = surface_chroma_type == VDP_CHROMA_TYPE_422;
+		break;
+
+	case VDP_YCBCR_FORMAT_NV12:
+	case VDP_YCBCR_FORMAT_YV12:
+		*is_supported = surface_chroma_type == VDP_CHROMA_TYPE_420;
+		break;
+
+	case VDP_YCBCR_FORMAT_Y8U8V8A8:
+	case VDP_YCBCR_FORMAT_V8U8Y8A8:
+	default:
+		*is_supported = VDP_FALSE;
+		break;
+
+	}
 
 	return VDP_STATUS_OK;
 }
